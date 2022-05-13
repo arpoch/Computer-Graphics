@@ -1,70 +1,102 @@
 #include<iostream>
 #include<graphics.h>
+#include<cmath>
 
-class A{
-	int maxLen=210,maxheight=25;
-	//int left=0,top=650-height,right=left+width,bottom=top+height;
-
-	void createPreA(int n){
-		line(100,50,100,650); //first pillar
-		
+//For variable disk either change the width according to the number of disks given by the user or
+// provide the width size upto which certain disk are allowed, increase the matrix size accordingly
+//Storing the disk position in each tower using matrix
+int a[10],b[10],c[10];
+int totalDisk,heightOfDisk = 25;
+int widthOfDisk = 200, margin =  widthOfDisk/20;
+void onTowerA(){
+	int left=0;	
+	int right=left+widthOfDisk,bottom=600,top=bottom-heightOfDisk;
+	for(int i=0;i<totalDisk;i++){
+		if(a[i]!=0){
+			int tempLeft = left + i*margin;
+			int tempRight = right - i*margin;
+			//std::cout<<margin<<" "<<left<<" "<<top<<" "<<right<<" "<<bottom<<std::endl;
+			rectangle(tempLeft,top,tempRight,bottom);
+			bottom = top;
+			top -= heightOfDisk;
+		}
 	}
-};
-
-void initDraw(int totalDisk,int *diskMargin){
-	line(100,50,100,650); //first pillar
-	line(400,50,400,650); //second pillar
-	line(800,50,800,650); //third pillar
-	line(50,650,800,650); //base
-	int width=200,height=25,left=0,top=650-height,right=left+width,bottom=top+height;
-	//float percentageM=margin/(width/(float)100), blockWidth=(width*percentageM/100);
-	int blockWidth = (width/totalDisk)/2;
-//	float percentageM= (blockWidth*100)/width;
-//	int margin = width*percentageM/100;
-	//std::cout<<percentageM<<" "<<blockWidth<<" "<<margin<<std::endl;	
-	for(int i=0;i<totalDisk;i++){	
-		std::cout<<left<<" "<<right<<std::endl;
-		diskMargin[i]=left;	
-//		setfillstyle(SOLID_FILL ,RED); 
-//		rectangle(left,top,right,bottom);
-//		floodfill(left+1,bottom-1,WHITE);
-//		floodfill(101,bottom-1,WHITE);
-		left+=blockWidth;
-		top-=height;
-		right-=blockWidth;
-		bottom=top+height;
-	}
-//	for(int j=0;j<totalDisk;j++){
-//		std::cout<<diskMargin[j];
-//	}
 }
 
-void hanoi(int n,char src,char dest, char aux){
-	if(n==0) return;
-	hanoi(n-1,src,aux,dest);	
-	//Alternative movement
-	//[first, third,... put always on aux][Second, fourth,... put always on dest]
-	std::cout<<"Move disk "<<n<<" from "<<src<<" to "<<dest<<std::endl;
-	hanoi(n-1,aux,dest,src);	
-	//Alternative movement
-	//[first, third,... put always on dest][second, fourth,... put always on aux]
+void onTowerB(){
+	int left=300;
+	int right=left+widthOfDisk,bottom=600,top=bottom-heightOfDisk;
+	for(int i=0;i<totalDisk;i++){
+		//std::cout<<margin<<" "<<left<<" "<<top<<" "<<right<<" "<<bottom<<std::endl;
+		if(b[i]!=0){
+			int tempLeft = left + i*margin;
+			int tempRight = right - i*margin;
+			rectangle(tempLeft,top,tempRight,bottom);
+			bottom = top;
+			top -=heightOfDisk;
+		}	
+	}
+}
+
+void onTowerC(){
+	int left=700;
+	int right=left+widthOfDisk,bottom=600,top=bottom-heightOfDisk;
+	for(int i=0;i<totalDisk;i++){
+		//std::cout<<margin<<" "<<left<<" "<<top<<" "<<right<<" "<<bottom<<std::endl;
+		if(c[i]!=0){
+			int tempLeft = left + i*margin;
+			int tempRight = right - i*margin;
+			rectangle(tempLeft,top,tempRight,bottom);
+			bottom = top;
+			top -=heightOfDisk;
+		}		
+	}
+}
+
+void drawDisk(){
+	cleardevice();
+	// Main Base
+    line(0, 600, 1000, 600);
+    // 1st Line
+    line(100, 600, 100, 300);
+    // 2nd Line
+    line(400, 600, 400, 300);
+    // 3rd Line
+    line(800, 600, 800, 300); 
+	onTowerA();
+	onTowerB();
+	onTowerC();
+	Sleep(1000);
+}
+
+int getDisk(int totalDisks,int currDisk){
+	return totalDisks-currDisk;
+}
+
+void TOHA(int disks,int *src,int *dest,int *aux){
+	if(disks==0) return;
+	TOHA(disks-1,src,aux,dest);
+	std::cout<<"Move disk "<<disks<< " from " <<src<<" to "<<dest<<std::endl;
+	src[getDisk(totalDisk,disks)]=0;
+	dest[getDisk(totalDisk,disks)]=1;
+	drawDisk();
+	TOHA(disks-1,aux,dest,src);
 }
 
 int main(){
-	
-	int gd=DETECT,gm;
-	initgraph(&gd,&gm,"C:\\TC\BGI");
-	initwindow(1000,800);
-	int n=0;
-	std::cout<<"Enter no. of disks\n";
-	std::cin>>n;
-	int diskWidth[n];
-	//init plane
-	initDraw(n,diskWidth);
-	//hanoi(n,'A','B','C');
-	floodfill(2,649,BLACK);
-	//floodfill(101,bottom-1,BLACK);
+	int gd=DETECT,gm;  
+    initgraph(&gd,&gm,"c:\\tc\\bgi");
+	initwindow(1024,768);
+	std::cout<<"Enter no. of disks(max:10) "<<std::endl;
+	std::cin>>totalDisk;
+	for(int i=0;i<10;i++){
+		a[i]=1;
+		b[i]=0;
+		c[i]=0;
+	}
+	//onTowerA();
+	drawDisk();
+	TOHA(totalDisk,a,c,b);
 	getch();
 	closegraph();
-	return 0;
 }
