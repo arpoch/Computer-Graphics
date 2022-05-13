@@ -41,7 +41,7 @@ int main(){
 		cleardevice();
 		std::time_t result = std::time(NULL);
 		struct tm *tS = std::localtime(&result);
-		
+
 		float hx = cos((tS->tm_hour*30 + tS->tm_min / 2) * M_PI / 180 - M_PI / 2) * 120 + 320;
         float hy = sin((tS->tm_hour*30 + tS->tm_min / 2) * M_PI / 180 - M_PI / 2) * 120 + 240;
         float mx = cos(tS->tm_min * M_PI / 30 - M_PI / 2) * 140 + 320;
@@ -51,7 +51,6 @@ int main(){
 		
 		drawClock(sx,sy,mx,my,hx,hy);
 		Sleep(1000);
-		//cleardevice();		
 	}
 	getch();
 	return 0;
